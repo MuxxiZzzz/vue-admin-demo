@@ -1,3 +1,7 @@
+###
+a vue admin demo based on vue-admin-template@PanJiaChen  
+###
+
 # vue-admin-template
 
 English | [简体中文](./README-zh.md)
