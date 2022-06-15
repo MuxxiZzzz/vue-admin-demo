@@ -1,6 +1,5 @@
-###
-a vue admin demo based on vue-admin-template@PanJiaChen  
-###
+# a vue admin demo based on vue-admin-template@PanJiaChen  
+
 
 # vue-admin-template
 
