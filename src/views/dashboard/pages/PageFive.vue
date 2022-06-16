@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div v-if="status">
-      <el-form ref="form" :model="form" label-width="80px">
+      <!-- <el-form ref="form" :model="form" label-width="80px">
         <el-form-item label="租户名" prop="tenantName" :rules="rules.tenantName">
           <el-input v-model="form.tenantName" placeholder="租户名" />
         </el-form-item>
@@ -19,10 +19,33 @@
             </el-button>
           </div>
         </el-form-item>
-      </el-form>
+      </el-form> -->
+      <CreateForms
+        :form="form"
+        type="createTenant"
+        :switcher="true"
+        @resetData="setData"
+        @switchPage="status = !status"
+      >
+        <template v-slot:first>
+          <el-form-item label="租户名" prop="tenantName" :rules="rules.tenantName">
+            <el-input v-model="form.tenantName" placeholder="租户名" />
+          </el-form-item>
+        </template>
+        <template v-slot:second>
+          <el-form-item label="邮箱" prop="AdminEmailAddress" :rules="rules.AdminEmailAddress">
+            <el-input v-model="form.AdminEmailAddress" placeholder="AdminEmailAddress" />
+          </el-form-item>
+        </template>
+        <template v-slot:third>
+          <el-form-item label="启用租户">
+            <el-switch v-model="form.activation" />
+          </el-form-item>
+        </template>
+      </CreateForms>
     </div>
     <div v-if="!status">
-      <el-form ref="form2" :model="form" label-width="auto">
+      <!-- <el-form ref="form2" :model="form" label-width="auto">
         <el-form-item label="选择租户">
           <el-select v-model="form.tenantId" placeholder="选择租户" style="width:80%">
             <el-option v-for="(tenant, index) in form.tenants" :key="index" :label="tenant.tenancyName" :value="tenant.id" />
@@ -36,15 +59,24 @@
             </el-button>
           </div>
         </el-form-item>
-      </el-form>
+      </el-form> -->
+      <DeleteForms
+        :form="form"
+        type="deleteTenant"
+        @resetData="setData"
+        @switchPage="status = !status"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import { validateUsername, validateUseremail } from '@/utils/validate'
+import CreateForms from '@/components/CreateForms.vue'
+import DeleteForms from '@/components/DeleteForms.vue'
 
 export default {
+  components: { CreateForms, DeleteForms },
   props: {
     activeName: {
       type: String,
@@ -90,32 +122,6 @@ export default {
     async setData() {
       await this.$store.dispatch('user/getTenants')
       this.form.tenants = this.$store.state.user.tenants
-    },
-    onSubmit() {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          const { tenantName, activation, AdminEmailAddress } = this.form
-          this.loading = true
-          this.$store.dispatch(
-            'user/creatTenant',
-            {
-              tenancyName: tenantName,
-              name: tenantName,
-              isActive: activation,
-              AdminEmailAddress
-            })
-            .then(() => {
-              this.setData()
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          this.$message('请填写好信息')
-          return false
-        }
-      })
     },
     accountDelete(id) {
       if (id === '') {

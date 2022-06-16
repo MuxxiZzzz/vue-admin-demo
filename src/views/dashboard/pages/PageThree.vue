@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-form ref="form" :model="form" label-width="80px">
+    <!-- <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="角色ID" prop="roleid" :rules="rules.roleid">
         <el-input v-model="form.roleid" placeholder="英文ID" />
       </el-form-item>
@@ -15,13 +15,38 @@
       <el-form-item>
         <el-button type="primary" style="width:100%" :loading="loading" @click="onSubmit">立即创建</el-button>
       </el-form-item>
-    </el-form>
+    </el-form> -->
+    <CreateForms
+      :form="form"
+      type="createRole"
+      @resetData="setData"
+    >
+      <template v-slot:first>
+        <el-form-item label="角色ID" prop="roleid" :rules="rules.roleid">
+          <el-input v-model="form.roleid" placeholder="英文ID" />
+        </el-form-item>
+      </template>
+      <template v-slot:second>
+        <el-form-item label="显示名" prop="describeName" :rules="{required: true, message: '必须选择用户编号'}">
+          <el-input v-model="form.describeName" placeholder="中文名" />
+        </el-form-item>
+      </template>
+      <template v-slot:third>
+        <el-form-item label="权限" :rules="{required: true, message: '必须选择'}">
+          <el-select v-model="form.permission" placeholder="选择权限">
+            <el-option v-for="(permission, index) in form.permissions" :key="index" :label="permission.displayName" :value="permission.name" />
+          </el-select>
+        </el-form-item>
+      </template>
+    </CreateForms>
   </div>
 </template>
 
 <script>
 import { validateUserid } from '@/utils/validate'
+import CreateForms from '@/components/CreateForms.vue'
 export default {
+  components: { CreateForms },
   props: {
     activeName: {
       type: String,
@@ -63,35 +88,6 @@ export default {
     async setData() {
       await this.$store.dispatch('user/getPermissions')
       this.form.permissions = this.$store.state.user.permissions
-    },
-    onSubmit() {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          const { roleid, describeName, permission } = this.form
-          this.loading = true
-          this.$store.dispatch(
-            'user/createRole',
-            {
-              name: roleid,
-              displayName: describeName,
-              grantedPermissions: [permission]
-            })
-            .then(() => {
-              this.$message({
-                message: '创建成功',
-                type: 'success'
-              })
-              this.setData()
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          this.$message('请填写好信息')
-          return false
-        }
-      })
     },
     getPermissions() {
       this.$store.dispatch('user/getPermissions').then((data) => {

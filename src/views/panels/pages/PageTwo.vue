@@ -2,32 +2,20 @@
   <div>
     <el-table
       :data="tenants"
+      style="width: 100%"
       :row-class-name="tableRowClassName"
     >
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="id"
-        label="ID"
-      />
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="tenancyName"
-        label="用户ID"
-      />
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="name"
-        label="租户显示名称"
-      />
+      <Tables :data="'id'" />
+      <Tables :data="'tenancyName'" />
+      <Tables :data="'name'" />
     </el-table>
   </div>
 </template>
 
 <script>
+import Tables from '@/components/Tables'
 export default {
+  components: { Tables },
   data() {
     return {
       tenants: [],

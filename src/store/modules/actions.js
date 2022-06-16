@@ -37,9 +37,9 @@ const actions = {
       })
     })
   },
-  regist({ commit }, info, str) {
+  regist({ commit }, info) {
     return new Promise((resolve, reject) => {
-      regist(info, str).then(response => {
+      regist(info).then(response => {
         const { data } = response
         if (data.success) {
           Message({

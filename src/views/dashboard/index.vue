@@ -32,7 +32,7 @@ import PageTwo from './pages/PageTwo.vue'
 import PageThree from './pages/PageThree.vue'
 import PageFour from './pages/PageFour.vue'
 import PageFive from './pages/PageFive.vue'
-import Normal from './pages/normal.vue'
+import Normal from './pages/Normal'
 export default {
   name: 'Dashboard',
   components: { PageOne, PageTwo, PageThree, PageFour, PageFive, Normal },

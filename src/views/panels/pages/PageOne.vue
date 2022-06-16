@@ -1,40 +1,22 @@
 <template>
-  <div class="container">
+  <div>
     <el-table
       :data="users"
       style="width: 100%"
       :row-class-name="tableRowClassName"
     >
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="id"
-        label="ID"
-      />
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="userName"
-        label="用户ID"
-      />
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="name"
-        label="用户名"
-      />
-      <el-table-column
-        align="center"
-        header-align="center"
-        prop="emailAddress"
-        label="邮箱"
-      />
+      <Tables :data="'id'" />
+      <Tables :data="'userName'" />
+      <Tables :data="'name'" />
+      <Tables :data="'emailAddress'" />
     </el-table>
   </div>
 </template>
 
 <script>
+import Tables from '@/components/Tables'
 export default {
+  components: { Tables },
   data() {
     return {
       users: [],

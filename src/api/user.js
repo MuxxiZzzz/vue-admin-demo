@@ -17,7 +17,7 @@ export function regist(data, str) {
     })
   } else {
     return request({
-      url: '/api/services/app/Account/Register',
+      url: '/api/services/app/User/Create',
       method: 'post',
       data
     })
