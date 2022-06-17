@@ -2,8 +2,6 @@
   <div class="login-container">
     <!-- 登录页面 -->
     <login v-if="!regist" />
-    <!-- 注册页面 -->
-    <!-- <regist v-if="regist" @switchPage="regist = !regist" /> -->
   </div>
 </template>
 

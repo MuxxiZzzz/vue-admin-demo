@@ -6,34 +6,40 @@
     >
       <template v-slot:first>
         <el-form-item label="当前密码" prop="currentPassword" :rules="rules.password">
-          <el-input v-model="form.currentPassword" placeholder="当前密码" type="password" />
+          <!-- <el-input v-model="form.currentPassword" placeholder="当前密码" type="password" /> -->
+          <Input
+            ref="currentPassword"
+            :data="form.currentPassword"
+            placeholder="当前密码"
+            type="password"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:second>
         <el-form-item label="新密码" prop="password" :rules="rules.password">
-          <el-input v-model="form.password" placeholder="新密码" type="password" />
+          <!-- <el-input v-model="form.password" placeholder="新密码" type="password" /> -->
+          <Input
+            ref="password"
+            :data="form.password"
+            placeholder="新密码"
+            type="password"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
     </CreateForms>
-    <!-- <el-form ref="form3" :model="form" label-width="auto">
-      <el-form-item label="当前密码" prop="currentPassword" :rules="rules.password">
-        <el-input v-model="form.currentPassword" placeholder="当前密码" type="password" />
-      </el-form-item>
-      <el-form-item label="新密码" prop="password" :rules="rules.password">
-        <el-input v-model="form.password" placeholder="新密码" type="password" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" size="medium" style="width: 100%" :loading="loading" @click.native="resetPassword">更改密码</el-button>
-      </el-form-item>
-    </el-form> -->
   </div>
 </template>
 
 <script>
 import { validatePassword } from '@/utils/validate'
 import CreateForms from '@/components/CreateForms.vue'
+import { setNewData } from '@/utils/tools'
+import Input from '@/components/Input.vue'
+
 export default {
-  components: { CreateForms },
+  components: { CreateForms, Input },
   data() {
     return {
       loading: false,
@@ -54,6 +60,7 @@ export default {
 
   },
   methods: {
+    setNewData,
     resetPassword() {
       this.$refs.form3.validate(valid => {
         if (valid) {

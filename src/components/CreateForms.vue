@@ -1,6 +1,6 @@
 <template>
   <div class="createForm">
-    <el-form ref="form" :model="form" label-position="right" label-width="80px">
+    <el-form ref="form" :model="form" label-position="right" label-width="auto">
       <slot name="first" />
       <slot name="second" />
       <slot name="third" />
@@ -9,7 +9,7 @@
       <slot name="sixth" />
       <el-form-item v-if="switcher">
         <div style="display: flex;justify-content: space-between;">
-          <el-button type="primary" size="medium" style="width: 70%" :loading="loading" @click.native="onSubmit">提交</el-button>
+          <el-button ref="submit" type="primary" size="medium" style="width: 70%" :loading="loading" @click.native="onSubmit">提交</el-button>
           <el-button type="primary" size="medium" style="width: 28%" @click.native="clickSwitcher">
             <span class="el-icon-right" />
           </el-button>
@@ -39,11 +39,25 @@ export default {
       type: Boolean,
       default: false,
     },
+    pushlogin: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       loading: false,
     }
+  },
+  watch: {
+    pushlogin: {
+      handler: 'login',
+      deep: false,
+      immediate: false,
+    }
+  },
+  mounted() {
+    // this.listenKey()
   },
   methods: {
     clickSwitcher() {
@@ -54,6 +68,24 @@ export default {
       if (this.$props.type === 'createRole') { this.createRole() }
       if (this.$props.type === 'createTenant') { this.createTenant() }
       if (this.$props.type === 'resetPassword') { this.resetPassword() }
+      if (this.$props.type === 'login') { this.login() }
+    },
+    login() {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('user/login', this.$props.form).then(() => {
+            this.$router.push({ path: this.redirect || '/' })
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          // console.log('error submit!!')
+          this.$message('请填写好信息')
+          return false
+        }
+      })
     },
     resetPassword() {
       this.$refs.form.validate(valid => {
@@ -170,6 +202,44 @@ export default {
         }
       })
     },
+    // ///回车监听
+    addEnterListener() {
+      if (window.__completeEnterBind__) return
+      window.addEventListener('keydown', this.enterCallback)
+      window.__completeEnterBind__ = true
+    },
+    removeEnterListener() {
+      window.removeEventListener('keydown', this.enterCallback)
+      window.__completeEnterBind__ = false
+    },
+    enterCallback(e) {
+      function findFormItem(el) {
+        const parent = el.parentElement
+        if (!parent) return document.body
+        if (
+          parent.className.includes('el-form-item') &&
+          parent.className.includes('el-form-item--small')
+        ) {
+          return parent
+        }
+        return findFormItem(parent)
+      }
+      function findInput(container) {
+        let nextEl = container.nextElementSibling
+        if (!nextEl) return
+        let input = nextEl.querySelector('input')
+        while (input.id === 'el-select') {
+          nextEl = nextEl.nextElementSibling
+          if (!nextEl) return
+          input = nextEl.querySelector('input')
+        }
+        if (input.className.includes('el-input__inner')) return input
+      }
+      if (e.keyCode === 13) {
+        const container = findFormItem(document.activeElement)
+        findInput(container) && findInput(container).focus()
+      }
+    }
   },
 }
 </script>

@@ -34,22 +34,46 @@
     >
       <template v-slot:first>
         <el-form-item label="用户ID" prop="userid" :rules="rules.userid">
-          <el-input v-model="form.userid" placeholder="用户ID" />
+          <!-- <el-input v-model="form.userid" placeholder="用户ID" /> -->
+          <Input
+            ref="userid"
+            :data="form.userid"
+            placeholder="用户ID"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:second>
         <el-form-item label="用户名" prop="username" :rules="rules.username">
-          <el-input v-model="form.username" placeholder="用户名" />
+          <!-- <el-input v-model="form.username" placeholder="用户名" /> -->
+          <Input
+            ref="username"
+            :data="form.username"
+            placeholder="用户名"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:third>
         <el-form-item label="邮箱" prop="useremail" :rules="rules.useremail">
-          <el-input v-model="form.useremail" placeholder="邮箱" />
+          <!-- <el-input v-model="form.useremail" placeholder="邮箱" /> -->
+          <Input
+            ref="email"
+            :data="form.useremail"
+            placeholder="邮箱"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:fourth>
         <el-form-item label="密码" prop="password" :rules="rules.password">
-          <el-input v-model="form.password" type="password" placeholder="密码" />
+          <Input
+            ref="password"
+            :data="form.password"
+            type="password"
+            placeholder="密码"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:fifth>
@@ -71,8 +95,11 @@
 <script>
 import { validateUsername, validateUserid, validateUseremail, validatePassword } from '@/utils/validate'
 import CreateForms from '@/components/CreateForms.vue'
+import Input from '@/components/Input.vue'
+import { setNewData } from '@/utils/tools'
+
 export default {
-  components: { CreateForms },
+  components: { CreateForms, Input },
   props: {
     activeName: {
       type: String,
@@ -112,6 +139,7 @@ export default {
   mounted() {
   },
   methods: {
+    setNewData,
     checkData() {
       if (this.activeName === 'first') {
         this.setData()

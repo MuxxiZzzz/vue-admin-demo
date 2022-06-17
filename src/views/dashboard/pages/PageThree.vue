@@ -1,21 +1,5 @@
 <template>
   <div class="container">
-    <!-- <el-form ref="form" :model="form" label-width="80px">
-      <el-form-item label="角色ID" prop="roleid" :rules="rules.roleid">
-        <el-input v-model="form.roleid" placeholder="英文ID" />
-      </el-form-item>
-      <el-form-item label="显示名" prop="describeName" :rules="{required: true, message: '必须选择用户编号'}">
-        <el-input v-model="form.describeName" placeholder="中文名" />
-      </el-form-item>
-      <el-form-item label="权限" :rules="{required: true, message: '必须选择'}">
-        <el-select v-model="form.permission" placeholder="选择权限">
-          <el-option v-for="(permission, index) in form.permissions" :key="index" :label="permission.displayName" :value="permission.name" />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" style="width:100%" :loading="loading" @click="onSubmit">立即创建</el-button>
-      </el-form-item>
-    </el-form> -->
     <CreateForms
       :form="form"
       type="createRole"
@@ -23,12 +7,24 @@
     >
       <template v-slot:first>
         <el-form-item label="角色ID" prop="roleid" :rules="rules.roleid">
-          <el-input v-model="form.roleid" placeholder="英文ID" />
+          <!-- <el-input v-model="form.roleid" placeholder="英文ID" /> -->
+          <Input
+            ref="roleid"
+            :data="form.roleid"
+            placeholder="英文ID"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:second>
-        <el-form-item label="显示名" prop="describeName" :rules="{required: true, message: '必须选择用户编号'}">
-          <el-input v-model="form.describeName" placeholder="中文名" />
+        <el-form-item label="显示名" prop="describeName" :rules="{required: true, message: '必须填写'}">
+          <!-- <el-input v-model="form.describeName" placeholder="中文名" /> -->
+          <Input
+            ref="describeName"
+            :data="form.describeName"
+            placeholder="中文名"
+            @input="setNewData"
+          />
         </el-form-item>
       </template>
       <template v-slot:third>
@@ -45,8 +41,11 @@
 <script>
 import { validateUserid } from '@/utils/validate'
 import CreateForms from '@/components/CreateForms.vue'
+import Input from '@/components/Input.vue'
+import { setNewData } from '@/utils/tools'
+
 export default {
-  components: { CreateForms },
+  components: { CreateForms, Input },
   props: {
     activeName: {
       type: String,
@@ -80,6 +79,7 @@ export default {
   mounted() {
   },
   methods: {
+    setNewData,
     checkData() {
       if (this.activeName === 'third') {
         this.setData()

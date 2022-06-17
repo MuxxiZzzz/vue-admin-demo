@@ -1,65 +1,70 @@
 <template>
-  <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
-      <div class="title-container">
-        <h3 class="title">登录</h3>
-      </div>
-
-      <el-form-item prop="complex">
-        <span class="svg-container">
-          <div class="el-icon-user-solid" />
-        </span>
-        <el-input
-          ref="complex"
-          v-model="loginForm.complex"
-          placeholder="用户名或邮箱"
-          name="complex"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
-
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <div class="el-icon-warning" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="密码"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd('passwordType')">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-        </span>
-      </el-form-item>
-      <el-form-item>
-        <el-select v-model="loginForm.tenantId" placeholder="选择租户" style="width:117.5%" @change="setTenantID">
-          <el-option v-for="(tenant, index) in loginForm.tenants" :key="index" :label="tenant.tenancyName" :value="tenant.id" />
-        </el-select>
-      </el-form-item>
-      <div style="display: flex;justify-content: space-between">
-        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-        <!-- <el-button :loading="loading" type="primary" style="width:48%;margin-bottom:30px;" @click.native.prevent="$emit('switchPage')">注册</el-button> -->
-      </div>
-    </el-form>
+  <div class="login-container" style="width:60%;margin: 10% auto;">
+    <CreateForms
+      :form="form"
+      type="login"
+      :pushlogin="pushLogin"
+    >
+      <template v-slot:first>
+        <div class="title-container">
+          <h3 class="title">登录</h3>
+        </div>
+      </template>
+      <template v-slot:second>
+        <el-form-item prop="complex" :rules="loginRules.complex">
+          <span class="svg-container">
+            <div class="el-icon-user-solid" />
+          </span>
+          <Input
+            ref="complex"
+            :data="form.complex"
+            placeholder="用户名或邮箱"
+            @keyup.enter.native="$refs.password.$refs.ipt.focus()"
+            @input="setNewData"
+          />
+        </el-form-item>
+      </template>
+      <template v-slot:third>
+        <el-form-item prop="password" :rules="loginRules.password">
+          <span class="svg-container">
+            <div class="el-icon-warning" />
+          </span>
+          <Input
+            ref="password"
+            :data="form.password"
+            :type="passwordType"
+            placeholder="密码"
+            @keyup.enter.native="enter"
+            @input="setNewData"
+          />
+          <span class="show-pwd" @click="showPwd('passwordType')">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
+      </template>
+      <template v-slot:fourth>
+        <el-form-item>
+          <el-select v-model="form.tenantId" placeholder="选择租户" style="width:117.5%" @change="setTenantID">
+            <el-option v-for="(tenant, index) in form.tenants" :key="index" :label="tenant.tenancyName" :value="tenant.id" />
+          </el-select>
+        </el-form-item>
+      </template>
+    </CreateForms>
   </div>
 </template>
 
 <script>
 import { validateUsername, validateUserid, validateUseremail, validatePassword, validateComplex } from '@/utils/validate'
+import CreateForms from '@/components/CreateForms.vue'
+import Input from '@/components/Input.vue'
+import { setNewData } from '@/utils/tools'
 export default {
   name: 'Regist',
+  components: { CreateForms, Input },
   data() {
     return {
-      loginForm: {
+      pushLogin: false,
+      form: {
         tenants: [],
         tenantId: '',
         username: '',
@@ -93,16 +98,19 @@ export default {
   },
   mounted() {
   },
+  destroy() {
+  },
   methods: {
-    clickBTN() {
-      console.log(typeof (this.$store.state.user.TenantID))
+    setNewData,
+    enter() {
+      this.pushLogin = !this.pushLogin
     },
     setTenantID() {
-      this.$store.commit('user/SET_TENANTID', this.loginForm.tenantId)
+      this.$store.commit('user/SET_TENANTID', this.form.tenantId)
     },
     async setTenants() {
       await this.$store.dispatch('user/getTenants')
-      this.loginForm.tenants = this.$store.state.user.tenants
+      this.form.tenants = this.$store.state.user.tenants
     },
     showPwd(res) {
       if (this[res] === 'password') {
@@ -112,23 +120,6 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
-      })
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          // console.log('error submit!!')
-          this.$message('请填写好信息')
-          return false
-        }
       })
     },
   },
@@ -188,8 +179,8 @@ $dark_gray:#889aa4;
 $light_gray:#eee;
 
 .login-container {
-  min-height: 100%;
-  width: 100%;
+  min-height: 100vh;
+  width: 100vw;
   background-color: $bg;
   overflow: hidden;
 
